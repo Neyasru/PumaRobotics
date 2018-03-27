@@ -1,5 +1,4 @@
 %% Sketching the enviroment of the robotics work cell.
-
 %Clean variables and closing windows
 clc;
 clear;
@@ -14,6 +13,7 @@ tableAlfa = pi/7;		%Table rotation (20º)
 radiusExtTorus = 0.95;
 diamExtTorus = radiusExtTorus*2;
 diamTube = 0.3;
+radiusTube = diamTube/2;
 
 numHoles = 8;
 drillHoleRadius = 0.010;
@@ -21,10 +21,7 @@ drillHoleRadius = 0.010;
 numTurns = 8;
 WeldPointPerTurn = 8;
 
-posTorus = [0 0 0]
-INI = transl(posTorus); %center of the part
-
-% Main reference frames. 
+%Main reference frames. 
 FO = eye(4);
 HO=trplot(FO, ... % Plot frame T at the origin
     'frame', 'O', ...
@@ -35,7 +32,7 @@ HO=trplot(FO, ... % Plot frame T at the origin
     'width', 1.2);
 hold on;
 
-FT = transl(0,0,tableHeight)*trotx(tableAlfa)
+FT = transl(0,0,tableHeight)*trotx(tableAlfa);
 HT=trplot(FT, ... % Plot frame T at the origin
     'frame', 'T', ...
     'color', 'G',...
@@ -45,7 +42,7 @@ HT=trplot(FT, ... % Plot frame T at the origin
     'width', 1.2);
 hold on;
 
-FPB = transl(tableDim(1),tableDim(2)/2,tableHeight+sin(tableAlfa)*(tableDim(2)/2))
+FPB = transl(tableDim(1),cos(tableAlfa)*tableDim(2)/2,(sin(tableAlfa)*tableDim(2)/2)+tableHeight);
 HPB=trplot(FPB, ... % Plot frame PB at the origin
     'frame', 'PB', ...
     'color', 'B',...
@@ -55,7 +52,7 @@ HPB=trplot(FPB, ... % Plot frame PB at the origin
     'width', 1.2);
 hold on;
 
-% Plot the robot Puma
+%Plot the robot Puma
 mdl_puma560;
 p560.base = FPB;
 p560.plot(qz);
@@ -64,9 +61,9 @@ hold on;
 
 % Draw the working table and the torus in working position.
 %Drawing the Table
-coordX = tableDim(1)				%Max point on X coordinates of the table
-coordY = cos(tableAlfa)*tableDim(2) %Max point on Y coordinates of the table
-coordZ = sin(tableAlfa)*tableDim(2)	%Max point on Z coordinates of the table
+coordX = tableDim(1);                   %Max point on X coordinates of the table
+coordY = cos(tableAlfa)*tableDim(2);    %Max point on Y coordinates of the table
+coordZ = sin(tableAlfa)*tableDim(2);    %Max point on Z coordinates of the table
 
 xlabel('x');
 ylabel('y');
@@ -87,14 +84,14 @@ fv.vertices=fv.vertices-mi;
 %Taking the bounding box of the torus
 ma=max(fv.vertices);
 mi=min(fv.vertices);
-dmami=ma-mi
+dmami=ma-mi;
 
 %Scaling the torus
 fv.vertices=(fv.vertices/(dmami(1)/diamExtTorus));
 
 %Positioning and posing the torus
 fv.vertices=(fv.vertices)*rotz(-pi/2)*rotx(-tableAlfa);
-fv.vertices=fv.vertices+[diamTube+(tableDim(1)-diamTube)/2 0 tableHeight]
+fv.vertices=fv.vertices+[diamTube+(tableDim(1)-diamTube)/2 0 tableHeight];
 
 SS=patch(fv,...
 		'FaceColor',  [0.8 0.8 1.0], ...
@@ -105,14 +102,13 @@ SS=patch(fv,...
 % Add a camera light, and tone down the specular highlighting
 camlight('headlight');
 material('dull');
-alpha (SS,0.5);
+alpha (SS,0.7);
 
-
-view(30,30)
 % Fix the axes scaling, and set a nice view angle
-axis('image');
-axis 'equal'
 
+%axis 'equal'
+axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
+axis 'equal';
 % Give diferent points of view of the scenary: Top, Front, Lateral and isometrics view.
 
 
@@ -122,8 +118,31 @@ axis 'equal'
 % to the surface of the torus and the x-axis is in the direction of minimun
 % curvature. Draw in scale the frames
 
+for i=0:numHoles-1
+FH = FPB*trotx(tableAlfa)*trotx((-pi/numHoles)/2)*trotx(-pi*i/numHoles)*transl([-diamTube+(tableDim(1)-diamTube)/2 -radiusExtTorus+radiusTube 0])*troty(pi/2);
+HH=trplot(FH, ... % Plot frame PB at the origin
+    'frame', 'H', ...
+    'color', 'K',...
+    'text_opts', {'FontSize', 10, 'FontWeight', 'bold'},...
+    'length', 0.2,...
+    'arrow',...
+    'width', 0.35);
+hold on;
+axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
+end
 
-
+for i=0:numHoles-1
+FH = FPB*trotx(tableAlfa)*trotx((-pi/numHoles)/2)*trotx(-pi*i/numHoles)*transl([-diamTube*2+(tableDim(1)-diamTube)/2 -radiusExtTorus+radiusTube 0])*troty(pi/2)*trotx(pi);
+HH=trplot(FH, ... % Plot frame PB at the origin
+    'frame', 'H', ...
+    'color', 'K',...
+    'text_opts', {'FontSize', 10, 'FontWeight', 'bold'},...
+    'length', 0.2,...
+    'arrow',...
+    'width', 0.35);
+hold on;
+axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
+end
 
 
 % b) Repeat the obove operation for the center of the milling groove. Draw

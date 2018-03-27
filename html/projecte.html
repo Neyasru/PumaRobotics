@@ -1,0 +1,467 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>projecte</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-03-28"><meta name="DC.source" content="projecte.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Sketching the enviroment of the robotics work cell.</a></li><li><a href="#2">Working points.</a></li></ul></div><h2 id="1">Sketching the enviroment of the robotics work cell.</h2><pre class="codeinput"><span class="comment">%Clean variables and closing windows</span>
+clc;
+clear;
+close <span class="string">all</span>;
+
+<span class="comment">%Some Important Information</span>
+load(<span class="string">'Data_groove_weld_fv_torus.mat'</span>)  <span class="comment">% This is some data you can use</span>
+tableDim = [0.6 1.9];	<span class="comment">%Table dimensions</span>
+tableHeight = 0.75;     <span class="comment">%Table height</span>
+tableAlfa = pi/7;		<span class="comment">%Table rotation (20&ordm;)</span>
+
+radiusExtTorus = 0.95;
+diamExtTorus = radiusExtTorus*2;
+diamTube = 0.3;
+radiusTube = diamTube/2;
+
+numHoles = 8;
+drillHoleRadius = 0.010;
+
+numTurns = 8;
+WeldPointPerTurn = 8;
+
+posTorus = [0 0 0]
+INI = transl(posTorus); <span class="comment">%center of the part</span>
+
+<span class="comment">%Main reference frames.</span>
+FO = eye(4);
+HO=trplot(FO, <span class="keyword">...</span><span class="comment"> % Plot frame T at the origin</span>
+    <span class="string">'frame'</span>, <span class="string">'O'</span>, <span class="keyword">...</span>
+    <span class="string">'color'</span>, <span class="string">'R'</span>,<span class="keyword">...</span>
+    <span class="string">'text_opts'</span>, {<span class="string">'FontSize'</span>, 12, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>},<span class="keyword">...</span>
+    <span class="string">'length'</span>,0.5,<span class="keyword">...</span>
+    <span class="string">'arrow'</span>,<span class="keyword">...</span>
+    <span class="string">'width'</span>, 1.2);
+hold <span class="string">on</span>;
+
+FT = transl(0,0,tableHeight)*trotx(tableAlfa)
+HT=trplot(FT, <span class="keyword">...</span><span class="comment"> % Plot frame T at the origin</span>
+    <span class="string">'frame'</span>, <span class="string">'T'</span>, <span class="keyword">...</span>
+    <span class="string">'color'</span>, <span class="string">'G'</span>,<span class="keyword">...</span>
+    <span class="string">'text_opts'</span>, {<span class="string">'FontSize'</span>, 12, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>},<span class="keyword">...</span>
+    <span class="string">'length'</span>,0.5,<span class="keyword">...</span>
+    <span class="string">'arrow'</span>,<span class="keyword">...</span>
+    <span class="string">'width'</span>, 1.2);
+hold <span class="string">on</span>;
+
+FPB = transl(tableDim(1),cos(tableAlfa)*tableDim(2)/2,(sin(tableAlfa)*tableDim(2)/2)+tableHeight)
+HPB=trplot(FPB, <span class="keyword">...</span><span class="comment"> % Plot frame PB at the origin</span>
+    <span class="string">'frame'</span>, <span class="string">'PB'</span>, <span class="keyword">...</span>
+    <span class="string">'color'</span>, <span class="string">'B'</span>,<span class="keyword">...</span>
+    <span class="string">'text_opts'</span>, {<span class="string">'FontSize'</span>, 12, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>},<span class="keyword">...</span>
+    <span class="string">'length'</span>,0.5,<span class="keyword">...</span>
+    <span class="string">'arrow'</span>,<span class="keyword">...</span>
+    <span class="string">'width'</span>, 1.2);
+hold <span class="string">on</span>;
+
+<span class="comment">%Plot the robot Puma</span>
+mdl_puma560;
+p560.base = FPB;
+p560.plot(qz);
+hold <span class="string">on</span>;
+
+
+<span class="comment">% Draw the working table and the torus in working position.</span>
+<span class="comment">%Drawing the Table</span>
+coordX = tableDim(1)				<span class="comment">%Max point on X coordinates of the table</span>
+coordY = cos(tableAlfa)*tableDim(2) <span class="comment">%Max point on Y coordinates of the table</span>
+coordZ = sin(tableAlfa)*tableDim(2)	<span class="comment">%Max point on Z coordinates of the table</span>
+
+xlabel(<span class="string">'x'</span>);
+ylabel(<span class="string">'y'</span>);
+zlabel(<span class="string">'z'</span>);
+fill3([0 coordX coordX 0],[0 0 coordY coordY],[0 0 coordZ coordZ]+tableHeight,<span class="string">'r'</span>);
+
+
+<span class="comment">%Drawing the Torus</span>
+fv=stlread(<span class="string">'Torus.stl'</span>);<span class="comment">% fv is a struct with faces and vertices</span>
+
+<span class="comment">%Rotate to get it facing up</span>
+fv.vertices=fv.vertices*rotx(pi);
+
+<span class="comment">%Translating the torus to [0,0,0]</span>
+mi=min(fv.vertices);
+fv.vertices=fv.vertices-mi;
+
+<span class="comment">%Taking the bounding box of the torus</span>
+ma=max(fv.vertices);
+mi=min(fv.vertices);
+dmami=ma-mi
+
+<span class="comment">%Scaling the torus</span>
+fv.vertices=(fv.vertices/(dmami(1)/diamExtTorus));
+
+<span class="comment">%Positioning and posing the torus</span>
+fv.vertices=(fv.vertices)*rotz(-pi/2)*rotx(-tableAlfa);
+fv.vertices=fv.vertices+[diamTube+(tableDim(1)-diamTube)/2 0 tableHeight]
+
+SS=patch(fv,<span class="keyword">...</span>
+		<span class="string">'FaceColor'</span>,  [0.8 0.8 1.0], <span class="keyword">...</span>
+        <span class="string">'EdgeColor'</span>,       <span class="string">'none'</span>,        <span class="keyword">...</span>
+        <span class="string">'FaceLighting'</span>,    <span class="string">'gouraud'</span>,     <span class="keyword">...</span>
+        <span class="string">'AmbientStrength'</span>, 0.15);
+
+<span class="comment">% Add a camera light, and tone down the specular highlighting</span>
+camlight(<span class="string">'headlight'</span>);
+material(<span class="string">'dull'</span>);
+alpha (SS,0.5);
+
+<span class="comment">% Fix the axes scaling, and set a nice view angle</span>
+
+<span class="comment">%axis 'equal'</span>
+axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
+axis <span class="string">'equal'</span>
+<span class="comment">% Give diferent points of view of the scenary: Top, Front, Lateral and isometrics view.</span>
+</pre><pre class="codeoutput">
+posTorus =
+
+     0     0     0
+
+
+FT =
+
+    1.0000         0         0         0
+         0    0.9010   -0.4339         0
+         0    0.4339    0.9010    0.7500
+         0         0         0    1.0000
+
+
+FPB =
+
+    1.0000         0         0    0.6000
+         0    1.0000         0    0.8559
+         0         0    1.0000    1.1622
+         0         0         0    1.0000
+
+
+coordX =
+
+    0.6000
+
+
+coordY =
+
+    1.7118
+
+
+coordZ =
+
+    0.8244
+
+
+dmami =
+
+   18.9489    3.0000    9.6941
+
+
+fv = 
+
+  struct with fields:
+
+       faces: [668&times;3 double]
+    vertices: [2004&times;3 double]
+
+</pre><img vspace="5" hspace="5" src="projecte_01.png" alt=""> <h2 id="2">Working points.</h2><p>Give here your code to get the variables to locate: a) The reference frame for all drills holes, such that z-axis is orthogonal to the surface of the torus and the x-axis is in the direction of minimun curvature. Draw in scale the frames</p><pre class="codeinput"><span class="keyword">for</span> i=0:numHoles-1
+FH = FPB*trotx(tableAlfa)*trotx((-pi/numHoles)/2)*trotx(-pi*i/numHoles)*transl([-diamTube+(tableDim(1)-diamTube)/2 -radiusExtTorus+radiusTube 0])*troty(pi/2);
+HPB=trplot(FH, <span class="keyword">...</span><span class="comment"> % Plot frame PB at the origin</span>
+    <span class="string">'frame'</span>, <span class="string">'H'</span>, <span class="keyword">...</span>
+    <span class="string">'color'</span>, <span class="string">'K'</span>,<span class="keyword">...</span>
+    <span class="string">'text_opts'</span>, {<span class="string">'FontSize'</span>, 11, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>},<span class="keyword">...</span>
+    <span class="string">'length'</span>, 0.1,<span class="keyword">...</span>
+    <span class="string">'arrow'</span>,<span class="keyword">...</span>
+    <span class="string">'width'</span>, 0.2);
+hold <span class="string">on</span>;
+<span class="keyword">end</span>
+
+<span class="keyword">for</span> i=0:numHoles-1
+FH = FPB*trotx(tableAlfa)*trotx((-pi/numHoles)/2)*trotx(-pi*i/numHoles)*transl([-diamTube*2+(tableDim(1)-diamTube)/2 -radiusExtTorus+radiusTube 0])*troty(pi/2)*trotx(pi);
+HPB=trplot(FH, <span class="keyword">...</span><span class="comment"> % Plot frame PB at the origin</span>
+    <span class="string">'frame'</span>, <span class="string">'H'</span>, <span class="keyword">...</span>
+    <span class="string">'color'</span>, <span class="string">'K'</span>,<span class="keyword">...</span>
+    <span class="string">'text_opts'</span>, {<span class="string">'FontSize'</span>, 11, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>},<span class="keyword">...</span>
+    <span class="string">'length'</span>, 0.1,<span class="keyword">...</span>
+    <span class="string">'arrow'</span>,<span class="keyword">...</span>
+    <span class="string">'width'</span>, 0.1);
+hold <span class="string">on</span>;
+<span class="keyword">end</span>
+
+axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
+<span class="comment">% b) Repeat the obove operation for the center of the milling groove. Draw</span>
+<span class="comment">% this frames.</span>
+
+<span class="comment">%plot3(Groove(1,:),Groove(2,:),Groove(3,:),'r') % plotting the Groove</span>
+<span class="comment">%title ('Groove shape')</span>
+<span class="comment">%xlabel('x');</span>
+<span class="comment">%ylabel('y');</span>
+<span class="comment">%zlabel('z');</span>
+<span class="comment">%axis equal</span>
+
+<span class="comment">% c) The reference frames for all welding points, such that z-axis of the tool</span>
+<span class="comment">% is orthogonal to the surface of the torus and the x-axis is in the direction of</span>
+<span class="comment">% spiral trajectory. Draw in scale the frames</span>
+
+<span class="comment">%plot3(Weld_points(1,:),Weld_points(2,:),Weld_points(3,:),'g','LineWidth',2)</span>
+<span class="comment">%hold on</span>
+<span class="comment">%scatter3(Weld_points(1,:),Weld_points(2,:),Weld_points(3,:),'b','fillet')</span>
+<span class="comment">%xlabel('x');</span>
+<span class="comment">%ylabel('y');</span>
+<span class="comment">%zlabel('z');</span>
+
+
+
+
+<span class="comment">%for i=1:n</span>
+<span class="comment">%Welder_Pose(:,:,i)= INI*trotx(-pi/2)*troty(2*pi*i/n)*transl(0, 0, -radius)</span>
+<span class="comment">%end</span>
+<span class="comment">%Q= p560.ikine6s(Welder_Pose, 'run')</span>
+<span class="comment">%p560.plot(Q)</span>
+</pre><img vspace="5" hspace="5" src="projecte_02.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Sketching the enviroment of the robotics work cell.
+%Clean variables and closing windows
+clc;
+clear;
+close all;
+
+%Some Important Information
+load('Data_groove_weld_fv_torus.mat')  % This is some data you can use
+tableDim = [0.6 1.9];	%Table dimensions
+tableHeight = 0.75;     %Table height
+tableAlfa = pi/7;		%Table rotation (20º)
+
+radiusExtTorus = 0.95;
+diamExtTorus = radiusExtTorus*2;
+diamTube = 0.3;
+radiusTube = diamTube/2;
+
+numHoles = 8;
+drillHoleRadius = 0.010;
+
+numTurns = 8;
+WeldPointPerTurn = 8;
+
+posTorus = [0 0 0]
+INI = transl(posTorus); %center of the part
+
+%Main reference frames. 
+FO = eye(4);
+HO=trplot(FO, ... % Plot frame T at the origin
+    'frame', 'O', ...
+    'color', 'R',...
+    'text_opts', {'FontSize', 12, 'FontWeight', 'bold'},...
+    'length',0.5,...
+    'arrow',...
+    'width', 1.2);
+hold on;
+
+FT = transl(0,0,tableHeight)*trotx(tableAlfa)
+HT=trplot(FT, ... % Plot frame T at the origin
+    'frame', 'T', ...
+    'color', 'G',...
+    'text_opts', {'FontSize', 12, 'FontWeight', 'bold'},...
+    'length',0.5,...
+    'arrow',...
+    'width', 1.2);
+hold on;
+
+FPB = transl(tableDim(1),cos(tableAlfa)*tableDim(2)/2,(sin(tableAlfa)*tableDim(2)/2)+tableHeight)
+HPB=trplot(FPB, ... % Plot frame PB at the origin
+    'frame', 'PB', ...
+    'color', 'B',...
+    'text_opts', {'FontSize', 12, 'FontWeight', 'bold'},...
+    'length',0.5,...
+    'arrow',...
+    'width', 1.2);
+hold on;
+
+%Plot the robot Puma
+mdl_puma560;
+p560.base = FPB;
+p560.plot(qz);
+hold on;
+
+
+% Draw the working table and the torus in working position.
+%Drawing the Table
+coordX = tableDim(1)				%Max point on X coordinates of the table
+coordY = cos(tableAlfa)*tableDim(2) %Max point on Y coordinates of the table
+coordZ = sin(tableAlfa)*tableDim(2)	%Max point on Z coordinates of the table
+
+xlabel('x');
+ylabel('y');
+zlabel('z');
+fill3([0 coordX coordX 0],[0 0 coordY coordY],[0 0 coordZ coordZ]+tableHeight,'r');
+
+
+%Drawing the Torus
+fv=stlread('Torus.stl');% fv is a struct with faces and vertices
+
+%Rotate to get it facing up
+fv.vertices=fv.vertices*rotx(pi);
+
+%Translating the torus to [0,0,0]
+mi=min(fv.vertices);
+fv.vertices=fv.vertices-mi;
+
+%Taking the bounding box of the torus
+ma=max(fv.vertices);
+mi=min(fv.vertices);
+dmami=ma-mi
+
+%Scaling the torus
+fv.vertices=(fv.vertices/(dmami(1)/diamExtTorus));
+
+%Positioning and posing the torus
+fv.vertices=(fv.vertices)*rotz(-pi/2)*rotx(-tableAlfa);
+fv.vertices=fv.vertices+[diamTube+(tableDim(1)-diamTube)/2 0 tableHeight]
+
+SS=patch(fv,...
+		'FaceColor',  [0.8 0.8 1.0], ...
+        'EdgeColor',       'none',        ...
+        'FaceLighting',    'gouraud',     ...
+        'AmbientStrength', 0.15);
+		 
+% Add a camera light, and tone down the specular highlighting
+camlight('headlight');
+material('dull');
+alpha (SS,0.5);
+
+% Fix the axes scaling, and set a nice view angle
+
+%axis 'equal'
+axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
+axis 'equal'
+% Give diferent points of view of the scenary: Top, Front, Lateral and isometrics view.
+
+
+%% Working points.
+% Give here your code to get the variables to locate:
+% a) The reference frame for all drills holes, such that z-axis is orthogonal
+% to the surface of the torus and the x-axis is in the direction of minimun
+% curvature. Draw in scale the frames
+
+for i=0:numHoles-1
+FH = FPB*trotx(tableAlfa)*trotx((-pi/numHoles)/2)*trotx(-pi*i/numHoles)*transl([-diamTube+(tableDim(1)-diamTube)/2 -radiusExtTorus+radiusTube 0])*troty(pi/2);
+HPB=trplot(FH, ... % Plot frame PB at the origin
+    'frame', 'H', ...
+    'color', 'K',...
+    'text_opts', {'FontSize', 11, 'FontWeight', 'bold'},...
+    'length', 0.1,...
+    'arrow',...
+    'width', 0.2);
+hold on;
+end
+
+for i=0:numHoles-1
+FH = FPB*trotx(tableAlfa)*trotx((-pi/numHoles)/2)*trotx(-pi*i/numHoles)*transl([-diamTube*2+(tableDim(1)-diamTube)/2 -radiusExtTorus+radiusTube 0])*troty(pi/2)*trotx(pi);
+HPB=trplot(FH, ... % Plot frame PB at the origin
+    'frame', 'H', ...
+    'color', 'K',...
+    'text_opts', {'FontSize', 11, 'FontWeight', 'bold'},...
+    'length', 0.1,...
+    'arrow',...
+    'width', 0.1);
+hold on;
+end
+
+axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
+% b) Repeat the obove operation for the center of the milling groove. Draw
+% this frames.
+
+%plot3(Groove(1,:),Groove(2,:),Groove(3,:),'r') % plotting the Groove
+%title ('Groove shape')
+%xlabel('x');
+%ylabel('y');
+%zlabel('z');
+%axis equal
+
+% c) The reference frames for all welding points, such that z-axis of the tool 
+% is orthogonal to the surface of the torus and the x-axis is in the direction of 
+% spiral trajectory. Draw in scale the frames
+
+%plot3(Weld_points(1,:),Weld_points(2,:),Weld_points(3,:),'g','LineWidth',2)
+%hold on
+%scatter3(Weld_points(1,:),Weld_points(2,:),Weld_points(3,:),'b','fillet')
+%xlabel('x');
+%ylabel('y');
+%zlabel('z');
+
+
+
+
+%for i=1:n
+%Welder_Pose(:,:,i)= INI*trotx(-pi/2)*troty(2*pi*i/n)*transl(0, 0, -radius)
+%end
+%Q= p560.ikine6s(Welder_Pose, 'run')
+%p560.plot(Q)
+
+##### SOURCE END #####
+--></body></html>
