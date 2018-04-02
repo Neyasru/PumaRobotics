@@ -128,8 +128,12 @@ HH1=trplot(Drill1_Pose(:,:,i+1), ... % Plot frame PB at the origin
     'arrow',...
     'width', 0.35);
 hold on;
-axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
 end
+
+coor_circle=transl(Drill1_Pose)';
+scatter3(coor_circle(1,:),coor_circle(2,:),coor_circle(3,:),2,'r','LineWidth',5)
+hold on;
+axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
 
 for i=0:numHoles-1
 Drill2_Pose(:,:,i+1) = FPB*trotx(tableAlfa)*trotx((-pi/numHoles)/2)*trotx(-pi*i/numHoles)*transl([-diamTube*2+(tableDim(1)-diamTube)/2 -radiusExtTorus+radiusTube 0])*troty(pi/2)*trotx(pi);
@@ -144,6 +148,10 @@ hold on;
 axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
 end
 
+coor_circle=transl(Drill2_Pose)';
+scatter3(coor_circle(1,:),coor_circle(2,:),coor_circle(3,:),2,'r','LineWidth',5)
+hold on;
+axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
 
 % b) Repeat the obove operation for the center of the milling groove. Draw
 % this frames.
@@ -161,12 +169,13 @@ hold on;
 axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
 end
 
-%plot3(Groove(1,:),Groove(2,:),Groove(3,:),'r') % plotting the Groove
-%title ('Groove shape')
-%xlabel('x');
-%ylabel('y');
-%zlabel('z');
-%axis equal
+Groove_Scaled = (Groove/1000);
+Groove_Scaled = [0.1;0.1;0.1;0]+Groove_Scaled;
+Groove_Scaled = Groove_Pose(:,:,i+1)*Groove_Scaled;
+%Groove_Scaled = (Groove_Scaled/1000);
+
+plot3(Groove_Scaled(1,:),Groove_Scaled(2,:),Groove_Scaled(3,:),'G') % plotting the Groove
+axis 'equal';
 
 % c) The reference frames for all welding points, such that z-axis of the tool 
 % is orthogonal to the surface of the torus and the x-axis is in the direction of 
