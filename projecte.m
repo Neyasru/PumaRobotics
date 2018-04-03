@@ -6,14 +6,15 @@ close all;
 
 %Some Important Information
 load('Data_groove_weld_fv_torus.mat')  % This is some data you can use
-tableDim = [0.6 1.9];	%Table dimensions
+tableDim = [1 1.8];	%Table dimensions
 tableHeight = 0.75;     %Table height
 tableAlfa = pi/7;		%Table rotation (20º)
 
-radiusExtTorus = 0.95;
+radiusExtTorus = 0.90;
 diamExtTorus = radiusExtTorus*2;
-diamTube = 0.3;
+diamTube = 0.2;
 radiusTube = diamTube/2;
+amplitudToro = 0.8;
 
 numHoles = 8;
 drillHoleRadius = 0.010;
@@ -72,10 +73,10 @@ fill3([0 coordX coordX 0],[0 0 coordY coordY],[0 0 coordZ coordZ]+tableHeight,'r
 
 
 %Drawing the Torus
-fv=stlread('Torus.stl');% fv is a struct with faces and vertices
+fv=stlread('Toro_Robotica.stl');% fv is a struct with faces and vertices
 
 %Rotate to get it facing up
-fv.vertices=fv.vertices*rotx(pi);
+fv.vertices=fv.vertices*rotx(pi/2);
 
 %Translating the torus to [0,0,0]
 mi=min(fv.vertices);
@@ -86,12 +87,9 @@ ma=max(fv.vertices);
 mi=min(fv.vertices);
 dmami=ma-mi;
 
-%Scaling the torus
-fv.vertices=(fv.vertices/(dmami(1)/diamExtTorus));
-
 %Positioning and posing the torus
 fv.vertices=(fv.vertices)*rotz(-pi/2)*rotx(-tableAlfa);
-fv.vertices=fv.vertices+[diamTube+(tableDim(1)-diamTube)/2 0 tableHeight];
+fv.vertices=fv.vertices+[diamTube+amplitudToro+(tableDim(1)-diamTube-amplitudToro)/2 0 tableHeight];
 
 SS=patch(fv,...
 		'FaceColor',  [0.8 0.8 1.0], ...
@@ -119,7 +117,8 @@ axis 'equal';
 % curvature. Draw in scale the frames
 
 for i=0:numHoles-1
-Drill1_Pose(:,:,i+1) = FPB*trotx(tableAlfa)*trotx((-pi/numHoles)/2)*trotx(-pi*(i)/numHoles)*transl([-diamTube+(tableDim(1)-diamTube)/2 -radiusExtTorus+radiusTube 0])*troty(pi/2);
+Drill1_Pose(:,:,i+1) = FPB*trotx(tableAlfa)*trotx((-pi/numHoles)/2)*trotx(-pi*(i)/numHoles)*transl([-amplitudToro+(tableDim(1)-diamTube-amplitudToro)/2 -radiusExtTorus+radiusTube 0])*troty(-pi/2);
+%{
 HH1=trplot(Drill1_Pose(:,:,i+1), ... % Plot frame PB at the origin
     'frame', 'HF', ...
     'color', 'K',...
@@ -127,16 +126,19 @@ HH1=trplot(Drill1_Pose(:,:,i+1), ... % Plot frame PB at the origin
     'length', 0.2,...
     'arrow',...
     'width', 0.35);
+%}
 hold on;
 end
 
 coor_circle=transl(Drill1_Pose)';
-scatter3(coor_circle(1,:),coor_circle(2,:),coor_circle(3,:),2,'r','LineWidth',5)
+%scatter3(coor_circle(1,:),coor_circle(2,:),coor_circle(3,:),2,'r','LineWidth',5)
 hold on;
-axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
+axis([-0.5 3 -0.5 3 -0.5 3]);
 
 for i=0:numHoles-1
-Drill2_Pose(:,:,i+1) = FPB*trotx(tableAlfa)*trotx((-pi/numHoles)/2)*trotx(-pi*i/numHoles)*transl([-diamTube*2+(tableDim(1)-diamTube)/2 -radiusExtTorus+radiusTube 0])*troty(pi/2)*trotx(pi);
+    
+%troty(pi*i/numHoles) 
+Drill2_Pose(:,:,i+1) = FPB*trotx(tableAlfa)*trotx((-pi/numHoles)/2)*trotx(-pi*i/numHoles)*transl([-amplitudToro-diamTube+(tableDim(1)-diamTube-amplitudToro)/2 -radiusExtTorus+radiusTube 0])*troty(-pi/2)*trotx(pi);
 HH2=trplot(Drill2_Pose(:,:,i+1), ... % Plot frame PB at the origin
     'frame', 'HR', ...
     'color', 'K',...
