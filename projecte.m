@@ -180,24 +180,23 @@ HG=trplot(Groove_Pose(:,:,i+1), ... % Plot frame PB at the origin
     'width', 0.35);
 hold on;
 axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
-end
 
-
-Groove_Scaled = (Groove/1000);
-
-Groove_Scaled = [0.1;0.1;0.1;0]+Groove_Scaled;
-Groove_Scaled = Groove_Pose(:,:,i+1)*Groove_Scaled;
-%Groove_Scaled = (Groove_Scaled/1000);
-
+Groove_Scaled = Groove/1000;
+Groove_Scaled(4,:,:) = 1;
+Groove_Scaled(2,:,:) = Groove_Scaled(2,:,:)-min(Groove_Scaled(2,:,:));
+ma = max(Groove_Scaled(2,:));
+mi = min(Groove_Scaled(2,:));
+Groove_Scaled = Groove_Pose(:,:,i+1)*transl(+(ma-mi)/2,0,0)*trotz(pi/2)*Groove_Scaled;
 plot3(Groove_Scaled(1,:),Groove_Scaled(2,:),Groove_Scaled(3,:),'G') % plotting the Groove
 axis 'equal';
+end
 
 % c) The reference frames for all welding points, such that z-axis of the tool 
 % is orthogonal to the surface of the torus and the x-axis is in the direction of 
 % spiral trajectory. Draw in scale the frames
 
-FCT = FPB*transl(-(amplitudToro+diamTube)/2, 0, 0)*trotx(tableAlfa)*troty(pi*i/numHoles)*trotx(pi*i/numHoles)*transl(-radiusTube, 0, amplitudToro)*trotz(pi/2-pi/10)*trotx(pi);
-Weld_points(:,:,i+1) = FCT;
+%FCT = FPB*transl(-(amplitudToro+diamTube)/2, 0, 0)*trotx(tableAlfa)*troty(pi*i/numHoles)*trotx(pi*i/numHoles)*transl(-radiusTube, 0, amplitudToro)*trotz(pi/2-pi/10)*trotx(pi);
+%Weld_points(:,:,i+1) = FCT;
 
 %plot3(Weld_points(1,:),Weld_points(2,:),Weld_points(3,:),'g','LineWidth',2)
 %hold on
