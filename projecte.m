@@ -199,7 +199,7 @@ for i=0:numTurns-1
     PoseTool = trotx(pi/2)*troty(pi/2)*trotx(pi/10)*trotz(pi/2)*trotx(pi/2);
     for j=0:WeldPointPerTurn-1
         INI = FPB*trotx(-pi*i/numHoles - pi*j/(numHoles*WeldPointPerTurn) + tableAlfa)*transl((amplitudToro*i/numHoles) + (amplitudToro*j/(numHoles*WeldPointPerTurn)),0,0)*transl(-tableDim(1)+radiusTube,-radiusExtTorus+radiusTube,0)*PoseTool;
-        Welding_points(:,:,(i+1)*WeldPointPerTurn+(j+1)) = INI*trotx(2*pi*j/WeldPointPerTurn+pi/2)*transl(0,-radiusTube,0);
+        Welding_points(:,:,(i+1)*WeldPointPerTurn+(j+1)) = INI*trotx(2*pi*j/WeldPointPerTurn+pi/2)*transl(0,-radiusTube,0)*trotx(-pi/2);
     HW=trplot(Welding_points(:,:,(i+1)*WeldPointPerTurn+(j+1)), ... % Plot frame PB at the origin
         'frame', 'W', ...
         'color', 'G',...
