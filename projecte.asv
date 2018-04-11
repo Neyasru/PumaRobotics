@@ -59,9 +59,8 @@ mdl_puma560;
 p560.base = FPB;
 p560.plot(qz);
 hold on;
-axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
 
-%%
+
 % Draw the working table and the torus in working position.
 %Drawing the Table
 coordX = tableDim(1);                   %Max point on X coordinates of the table
@@ -117,7 +116,7 @@ axis 'equal';
 % a) The reference frame for all drills holes, such that z-axis is orthogonal
 % to the surface of the torus and the x-axis is in the direction of minimun
 % curvature. Draw in scale the frames
-
+%{
 for i=0:numHoles-1
     PoseTool = trotx(pi/2)*troty(pi/2)*trotx(pi+pi/10)*trotz(pi/2);    
     Drill1_Pose(:,:,i+1) = FPB*trotx((-pi/numHoles)*0.5)*transl((amplitudToro/numHoles)*0.5,0,0)*trotx(tableAlfa)*trotx(-pi*i/numHoles)*transl(amplitudToro*i/numHoles,0,0)*transl(-tableDim(1)+diamTube,-radiusExtTorus+radiusTube,0)*PoseTool;
@@ -190,19 +189,21 @@ for i=0:numHoles-1
     plot3(Groove_Scaled(1,:),Groove_Scaled(2,:),Groove_Scaled(3,:),'G') % plotting the Groove
     axis 'equal';
 end
-
+%}
 % c) The reference frames for all welding points, such that z-axis of the tool 
 % is orthogonal to the surface of the torus and the x-axis is in the direction of 
 % spiral trajectory. Draw in scale the frames
 
 for i=0:numTurns-1
     PoseTool = trotx(pi/2)*troty(pi/2)*trotx(pi/10)*trotz(pi/2)*trotx(pi/2);
+    INI = FPB*trotx(-pi*i/numHoles + tableAlfa)*transl((amplitudToro*i/numHoles),0,0)*transl(-tableDim(1)+radiusTube,-radiusExtTorus+radiusTube,0)*PoseTool;
     for j=0:WeldPointPerTurn-1
-        INI = FPB*trotx(-pi*i/numHoles - pi*j/(numHoles*WeldPointPerTurn) + tableAlfa)*transl((amplitudToro*i/numHoles) + (amplitudToro*j/(numHoles*WeldPointPerTurn)),0,0)*transl(-tableDim(1)+radiusTube,-radiusExtTorus+radiusTube,0)*PoseTool;
-        Welding_points(:,:,(i+1)*WeldPointPerTurn+(j+1)) = INI*trotx(2*pi*j/WeldPointPerTurn+pi/2)*transl(0,-radiusTube,0);
+        INI = FPB*trotx(-pi*i/numHoles - pi*j/(numHoles*WeldPointPerTurn) + tableAlfa)*transl((amplitudToro*i/numHoles),0,0)*transl(-tableDim(1)+radiusTube,-radiusExtTorus+radiusTube,0)*PoseTool;
+       %Welding_points(:,:,(i+1)*WeldPointPerTurn+(j+1)) = FPB*trotx(-pi*i/numHoles - pi*j/(numHoles*WeldPointPerTurn) + tableAlfa)*transl(amplitudToro*i/numHoles + amplitudToro*j/(numHoles*8),0,0)*trotz(2*pi*j/WeldPointPerTurn)*transl(-tableDim(1)+radiusTube,-radiusExtTorus,0)*PoseTool;
+        Welding_points(:,:,(i+1)*WeldPointPerTurn+(j+1)) = INI*trotx(2*pi*(j/WeldPointPerTurn)*transl(0,-radiusTube,0);
     HW=trplot(Welding_points(:,:,(i+1)*WeldPointPerTurn+(j+1)), ... % Plot frame PB at the origin
         'frame', 'W', ...
-        'color', 'G',...
+        'color', 'B',...
         'text_opts', {'FontSize', 10, 'FontWeight', 'bold'},...
         'length', 0.1,...
         'arrow',...
