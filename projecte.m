@@ -23,6 +23,8 @@ drillHoleRadius = 0.010;
 numTurns = 8;
 WeldPointPerTurn = 8;
 
+toolLenght = 0.2;
+
 %Main reference frames. 
 FO = eye(4);
 HO=trplot(FO, ... % Plot frame T at the origin
@@ -56,7 +58,9 @@ hold on;
 
 %Plot the robot Puma
 mdl_puma560;
-p560.base = FPB;
+p560.links(2).a = 0.9
+p560.links(4).d = 0.9
+p560.base = FPB*transl(0,-0.5,0);
 p560.plot(qz);
 hold on;
 axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
@@ -119,9 +123,17 @@ axis 'equal';
 % curvature. Draw in scale the frames
 
 for i=0:numHoles-1
-    PoseTool = trotx(pi/2)*troty(pi/2)*trotx(pi+pi/10)*trotz(pi/2);    
-    Drill1_Pose(:,:,i+1) = FPB*trotx((-pi/numHoles)*0.5)*transl((amplitudToro/numHoles)*0.5,0,0)*trotx(tableAlfa)*trotx(-pi*i/numHoles)*transl(amplitudToro*i/numHoles,0,0)*transl(-tableDim(1)+diamTube,-radiusExtTorus+radiusTube,0)*PoseTool;
-    HH1=trplot(Drill1_Pose(:,:,i+1), ... % Plot frame PB at the origin
+    PoseTool = trotx(pi/2)*troty(pi/2)*trotx(pi+pi/10)*trotz(pi/2);
+    %position before start drilling
+    Drilling1_Poses(:,:,i*3+1) = FPB*trotx((-pi/numHoles)*0.5)*transl((amplitudToro/numHoles)*0.5,0,0)*trotx(tableAlfa)*trotx(-pi*i/numHoles)*transl(amplitudToro*i/numHoles,0,0)*transl(-tableDim(1)+diamTube+toolLenght+0.1,-radiusExtTorus+radiusTube,0)*PoseTool;
+    %position drilling
+    Drilling1_Poses(:,:,i*3+2) = FPB*trotx((-pi/numHoles)*0.5)*transl((amplitudToro/numHoles)*0.5,0,0)*trotx(tableAlfa)*trotx(-pi*i/numHoles)*transl(amplitudToro*i/numHoles,0,0)*transl(-tableDim(1)+diamTube+toolLenght,-radiusExtTorus+radiusTube,0)*PoseTool;  
+    %position after start drilling
+    Drilling1_Poses(:,:,i*3+3) = FPB*trotx((-pi/numHoles)*0.5)*transl((amplitudToro/numHoles)*0.5,0,0)*trotx(tableAlfa)*trotx(-pi*i/numHoles)*transl(amplitudToro*i/numHoles,0,0)*transl(-tableDim(1)+diamTube+toolLenght+0.1,-radiusExtTorus+radiusTube,0)*PoseTool;
+    %position of the hole
+    Drill1_Plot(:,:,i+1) = FPB*trotx((-pi/numHoles)*0.5)*transl((amplitudToro/numHoles)*0.5,0,0)*trotx(tableAlfa)*trotx(-pi*i/numHoles)*transl(amplitudToro*i/numHoles,0,0)*transl(-tableDim(1)+diamTube,-radiusExtTorus+radiusTube,0)*PoseTool;  
+    %{
+    HH1=trplot(Drill1_Plot(:,:,i+), ... % Plot frame PB at the origin
         'frame', 'HF', ...
         'color', 'K',...
         'text_opts', {'FontSize', 10, 'FontWeight', 'bold'},...
@@ -129,27 +141,21 @@ for i=0:numHoles-1
         'arrow',...
         'width', 0.35);
     hold on;
+    %}
 end
 
-coor_circle=transl(Drill1_Pose)';
+coor_circle=transl(Drill1_Plot)';
 scatter3(coor_circle(1,:),coor_circle(2,:),coor_circle(3,:),2,'r','LineWidth',5)
 hold on;
 axis([-0.5 3 -0.5 3 -0.5 3]);
 
 for i=0:numHoles-1
-    %troty(pi*i/numHoles) 
-    %Drill2_Pose(:,:,i+1) = FPB*trotx(tableAlfa)*trotx((-pi/numHoles)/2)*trotx(-pi*i/numHoles)*transl([-amplitudToro-diamTube+(tableDim(1)-diamTube-amplitudToro)/2 -radiusExtTorus+radiusTube 0])*troty(-pi/2)*trotx(pi);
-    %FCT = FPB*transl(-(amplitudToro+diamTube)/2, 0, 0)*trotx(tableAlfa)*troty(pi*i/numHoles)*trotx(pi*i/numHoles)*transl(-radiusTube, 0, amplitudToro)*trotz(pi/2-pi/10)*trotx(pi);
-    %Drill2_Pose(:,:,i+1) = FCT;
-    %*trotx(tableAlfa)*transl(-weigthExtTorus/2, -amplitudToro, 0)*troty(pi/10); %FPB*trotx(tableAlfa)*trotx((-pi/numHoles)/2)*transl(-(amplitudToro+diamTube*2)/2, 0, amplitudToro)*trotz(-pi/2-0.3)*trotx(-pi/2);
-
-
     PoseTool = trotx(pi/2)*troty(pi/2)*trotx(pi/10)*trotz(pi/2);
-    %Drill2_Pose(:,:,i+1) = PoseTool;
-
-    Drill2_Pose(:,:,i+1) = FPB*trotx((-pi/numHoles)*0.5)*transl((amplitudToro/numHoles)*0.5,0,0)*trotx(tableAlfa)*trotx(-pi*i/numHoles)*transl(amplitudToro*i/numHoles,0,0)*transl(-tableDim(1),-radiusExtTorus+radiusTube,0)*PoseTool;
-
-    HH2=trplot(Drill2_Pose(:,:,i+1), ... % Plot frame PB at the origin
+    %position of the hole
+    Drill2_Plot(:,:,i+1) = FPB*trotx((-pi/numHoles)*0.5)*transl((amplitudToro/numHoles)*0.5,0,0)*trotx(tableAlfa)*trotx(-pi*i/numHoles)*transl(amplitudToro*i/numHoles,0,0)*transl(-tableDim(1),-radiusExtTorus+radiusTube,0)*PoseTool;
+   
+    %{
+    HH2=trplot(Drill2_Plot(:,:,i+1), ... % Plot frame PB at the origin
         'frame', 'HR', ...
         'color', 'K',...
         'text_opts', {'FontSize', 10, 'FontWeight', 'bold'},...
@@ -158,9 +164,10 @@ for i=0:numHoles-1
         'width', 0.35);
     hold on;
     axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
+    %}
 end
 
-coor_circle=transl(Drill2_Pose)';
+coor_circle=transl(Drill2_Plot)';
 scatter3(coor_circle(1,:),coor_circle(2,:),coor_circle(3,:),2,'r','LineWidth',5)
 hold on;
 axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
@@ -170,7 +177,18 @@ axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
 
 for i=0:numHoles-1
     PoseTool = trotx(pi/2)*troty(pi/2)*trotx(pi/10)*trotz(pi/2)*trotx(pi/2);
-    Groove_Pose(:,:,i+1) = FPB*trotx((-pi/numHoles)*0.5)*transl((amplitudToro/numHoles)*0.5,0,0)*trotx(tableAlfa)*trotx(-pi*i/numHoles)*transl(amplitudToro*i/numHoles,0,0)*transl(-tableDim(1)+radiusTube,-radiusExtTorus,0)*PoseTool;
+    %position before start grooving
+    Grooving_Poses(:,:,i*4+1) = FPB*trotx((-pi/numHoles)*0.5)*transl((amplitudToro/numHoles)*0.5,0,0)*trotx(tableAlfa)*trotx(-pi*(i-0.1)/numHoles)*transl(amplitudToro*(i-0.1)/numHoles,0,0)*transl(-tableDim(1)+radiusTube,-radiusExtTorus-toolLenght-0.1,0)*PoseTool;
+    %position start grooving
+    Grooving_Poses(:,:,i*4+2) = FPB*trotx((-pi/numHoles)*0.5)*transl((amplitudToro/numHoles)*0.5,0,0)*trotx(tableAlfa)*trotx(-pi*(i-0.1)/numHoles)*transl(amplitudToro*(i-0.1)/numHoles,0,0)*transl(-tableDim(1)+radiusTube,-radiusExtTorus-toolLenght,0)*PoseTool;
+    %position end grooving
+    Grooving_Poses(:,:,i*4+3) = FPB*trotx((-pi/numHoles)*0.5)*transl((amplitudToro/numHoles)*0.5,0,0)*trotx(tableAlfa)*trotx(-pi*(i+0.1)/numHoles)*transl(amplitudToro*(i+0.1)/numHoles,0,0)*transl(-tableDim(1)+radiusTube,-radiusExtTorus-toolLenght,0)*PoseTool;
+    %position after start grooving
+    Grooving_Poses(:,:,i*4+4) = FPB*trotx((-pi/numHoles)*0.5)*transl((amplitudToro/numHoles)*0.5,0,0)*trotx(tableAlfa)*trotx(-pi*(i+0.1)/numHoles)*transl(amplitudToro*(i+0.1)/numHoles,0,0)*transl(-tableDim(1)+radiusTube,-radiusExtTorus-toolLenght-0.1,0)*PoseTool;
+    %position of the groove
+    Groove_Plot(:,:,i+1) = FPB*trotx((-pi/numHoles)*0.5)*transl((amplitudToro/numHoles)*0.5,0,0)*trotx(tableAlfa)*trotx(-pi*i/numHoles)*transl(amplitudToro*i/numHoles,0,0)*transl(-tableDim(1)+radiusTube,-radiusExtTorus,0)*PoseTool;
+    
+    %{
     HG=trplot(Groove_Pose(:,:,i+1), ... % Plot frame PB at the origin
         'frame', 'G', ...
         'color', 'R',...
@@ -180,13 +198,14 @@ for i=0:numHoles-1
         'width', 0.35);
     hold on;
     axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
+    %}
 
     Groove_Scaled = Groove/1000;
     Groove_Scaled(4,:,:) = 1;
     Groove_Scaled(2,:,:) = Groove_Scaled(2,:,:)-min(Groove_Scaled(2,:,:));
     ma = max(Groove_Scaled(2,:));
     mi = min(Groove_Scaled(2,:));
-    Groove_Scaled = Groove_Pose(:,:,i+1)*transl(+(ma-mi)/2,0,0)*trotz(pi/2)*Groove_Scaled;
+    Groove_Scaled = Groove_Plot(:,:,i+1)*transl(+(ma-mi)/2,0,0)*trotz(pi/2)*Groove_Scaled;
     plot3(Groove_Scaled(1,:),Groove_Scaled(2,:),Groove_Scaled(3,:),'G') % plotting the Groove
     axis 'equal';
 end
@@ -200,6 +219,7 @@ for i=0:numTurns-1
     for j=0:WeldPointPerTurn-1
         INI = FPB*trotx(-pi*i/numHoles - pi*j/(numHoles*WeldPointPerTurn) + tableAlfa)*transl((amplitudToro*i/numHoles) + (amplitudToro*j/(numHoles*WeldPointPerTurn)),0,0)*transl(-tableDim(1)+radiusTube,-radiusExtTorus+radiusTube,0)*PoseTool;
         Welding_points(:,:,(i+1)*WeldPointPerTurn+(j+1)) = INI*trotx(2*pi*j/WeldPointPerTurn+pi/2)*transl(0,-radiusTube,0)*trotx(-pi/2);
+    %{
     HW=trplot(Welding_points(:,:,(i+1)*WeldPointPerTurn+(j+1)), ... % Plot frame PB at the origin
         'frame', 'W', ...
         'color', 'G',...
@@ -208,7 +228,8 @@ for i=0:numTurns-1
         'arrow',...
         'width', 0.1);
     hold on;
-    axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
+    axis([-0.5 1.5 -0.5 2.25 -0.5 2.5]);
+    %}
     end
 end
 
@@ -225,5 +246,11 @@ end
 %for i=1:n
 %Welder_Pose(:,:,i)= INI*trotx(-pi/2)*troty(2*pi*i/n)*transl(0, 0, -radius)
 %end
-%Q= p560.ikine6s(Welder_Pose, 'run')
-%p560.plot(Q)
+Q= p560.ikine6s(Drilling1_Poses, 'run')
+axis([-0.5 1.5 -0.5 2.25 -0.5 2.5]);
+p560.plot(Q)
+
+Q= p560.ikine6s(Grooving_Poses, 'run')
+axis([-0.5 1.5 -0.5 2.25 -0.5 2.5]);
+p560.plot(Q)
+
