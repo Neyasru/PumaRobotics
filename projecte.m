@@ -60,7 +60,7 @@ hold on;
 mdl_puma560;
 p560.links(2).a = 0.9
 p560.links(4).d = 0.9
-p560.base = FPB*transl(0,-0.5,0);
+p560.base = FPB*transl(0,-0.6,0);
 p560.plot(qz);
 hold on;
 axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
@@ -213,12 +213,19 @@ end
 % c) The reference frames for all welding points, such that z-axis of the tool 
 % is orthogonal to the surface of the torus and the x-axis is in the direction of 
 % spiral trajectory. Draw in scale the frames
-
+k=0
 for i=0:numTurns-1
     PoseTool = trotx(pi/2)*troty(pi/2)*trotx(pi/10)*trotz(pi/2)*trotx(pi/2);
     for j=0:WeldPointPerTurn-1
         INI = FPB*trotx(-pi*i/numHoles - pi*j/(numHoles*WeldPointPerTurn) + tableAlfa)*transl((amplitudToro*i/numHoles) + (amplitudToro*j/(numHoles*WeldPointPerTurn)),0,0)*transl(-tableDim(1)+radiusTube,-radiusExtTorus+radiusTube,0)*PoseTool;
         Welding_points(:,:,(i+1)*WeldPointPerTurn+(j+1)) = INI*trotx(2*pi*j/WeldPointPerTurn+pi/2)*transl(0,-radiusTube,0)*trotx(-pi/2);
+        if (j<=4)
+                Welding_pointsRobo(:,:,(k*3+1)) = INI*trotx(2*pi*j/WeldPointPerTurn+pi/2)*transl(0,-radiusTube-toolLenght-0.1,0)*trotx(-pi/2);
+                Welding_pointsRobo(:,:,(k*3+2)) = INI*trotx(2*pi*j/WeldPointPerTurn+pi/2)*transl(0,-radiusTube-toolLenght,0)*trotx(-pi/2);
+                Welding_pointsRobo(:,:,(k*3+3)) = Welding_pointsRobo(:,:,(k*3+1));
+
+            k= k+1;
+        end
     %{
     HW=trplot(Welding_points(:,:,(i+1)*WeldPointPerTurn+(j+1)), ... % Plot frame PB at the origin
         'frame', 'W', ...
@@ -254,3 +261,6 @@ Q= p560.ikine6s(Grooving_Poses, 'run')
 axis([-0.5 1.5 -0.5 2.25 -0.5 2.5]);
 p560.plot(Q)
 
+Q= p560.ikine6s(Welding_pointsRobo, 'run')
+axis([-0.5 1.5 -0.5 2.25 -0.5 2.5]);
+p560.plot(Q)
