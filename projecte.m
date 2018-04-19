@@ -109,12 +109,28 @@ material('dull');
 alpha (SS,0.7);
 
 % Fix the axes scaling, and set a nice view angle
-
-%axis 'equal'
+% axis 'equal'
 axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
 axis 'equal';
-% Give diferent points of view of the scenary: Top, Front, Lateral and isometrics view.
+
+% Save figure to use it later
 savefig(sketch,'SketchFig.fig');
+
+%%Give diferent points of view of the scenary: Top, Front, Lateral and isometrics view.
+%Top View
+openfig('SketchFig.fig');
+camtarget([tableDim(1)/2, coordY/2, 0]);
+campos([tableDim(1)/2, coordY/2, 10]);
+
+%Frontal View
+openfig('SketchFig.fig');
+camtarget([tableDim(1)/2, 0, coordX/2+tableHeight]);
+campos([tableDim(1)/2, -10, coordX/2+tableHeight]);
+
+%Lateral View
+openfig('SketchFig.fig');
+camtarget([0, coordY/2, coordX/2+tableHeight]);
+campos([-10, coordY/2, coordX/2+tableHeight]);
 
 %% Working points.
 % Give here your code to get the variables to locate:
@@ -164,8 +180,8 @@ for i=0:numHoles-1
     
 end
 
-axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
-axis 'equal';
+    axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
+    axis 'equal';
 %%
 % b) Repeat the obove operation for the center of the milling groove. Draw
 % this frames.
@@ -195,12 +211,7 @@ for i=0:numHoles-1
     axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
     
 
-    Groove_Scaled = Groove/1000;
-    Groove_Scaled(4,:,:) = 1;
-    Groove_Scaled(2,:,:) = Groove_Scaled(2,:,:)-min(Groove_Scaled(2,:,:));
-    ma = max(Groove_Scaled(2,:));
-    mi = min(Groove_Scaled(2,:));
-    Groove_Scaled = Groove_Plot(:,:,i+1)*transl(+(ma-mi)/2,0,0)*trotz(pi/2)*Groove_Scaled;
+    
     axis 'equal';
     hold on
 end
@@ -242,10 +253,17 @@ end
 axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
 axis 'equal';
 
+close all;
 %% Robo working environment 
 roboFig = openfig('SketchFig.fig');
 for i=0:numHoles-1
-    plot3(Groove_Scaled(1,:),Groove_Scaled(2,:),Groove_Scaled(3,:),'G') % plotting the Groove
+    Groove_Scaled = Groove/1000;
+    Groove_Scaled(4,:,:) = 1;
+    Groove_Scaled(2,:,:) = Groove_Scaled(2,:,:)-min(Groove_Scaled(2,:,:));
+    ma = max(Groove_Scaled(2,:));
+    mi = min(Groove_Scaled(2,:));
+    Groove_Scaled = Groove_Plot(:,:,i+1)*transl(+(ma-mi)/2,0,0)*trotz(pi/2)*Groove_Scaled;
+    plot3(Groove_Scaled(1,:),Groove_Scaled(2,:),Groove_Scaled(3,:),'G'); % plotting the Groove
 end
 coor_circle=transl(Drill1_Plot)';
 scatter3(coor_circle(1,:),coor_circle(2,:),coor_circle(3,:),2,'r','LineWidth',5)
