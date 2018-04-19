@@ -26,6 +26,7 @@ WeldPointPerTurn = 8;
 toolLenght = 0.2;
 
 %Main reference frames. 
+sketch = figure;
 FO = eye(4);
 HO=trplot(FO, ... % Plot frame T at the origin
     'frame', 'O', ...
@@ -58,15 +59,14 @@ hold on;
 
 %Plot the robot Puma
 mdl_puma560;
-p560.links(2).a = 0.9
-p560.links(4).d = 0.9
+p560.links(2).a = 0.9;
+p560.links(4).d = 0.9;
 p560.base = FPB*transl(0,-0.6,0);
 p560.plot(qz);
 hold on;
 axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
 
-%%
-% Draw the working table and the torus in working position.
+%% Draw the working table and the torus in working position.
 %Drawing the Table
 coordX = tableDim(1);                   %Max point on X coordinates of the table
 coordY = cos(tableAlfa)*tableDim(2);    %Max point on Y coordinates of the table
@@ -114,14 +114,14 @@ alpha (SS,0.7);
 axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
 axis 'equal';
 % Give diferent points of view of the scenary: Top, Front, Lateral and isometrics view.
-
+savefig(sketch,'SketchFig.fig');
 
 %% Working points.
 % Give here your code to get the variables to locate:
 % a) The reference frame for all drills holes, such that z-axis is orthogonal
 % to the surface of the torus and the x-axis is in the direction of minimun
 % curvature. Draw in scale the frames
-
+drillsFig = openfig('SketchFig.fig');
 for i=0:numHoles-1
     PoseTool = trotx(pi/2)*troty(pi/2)*trotx(pi+pi/10)*trotz(pi/2);
     %position before start drilling
@@ -132,8 +132,8 @@ for i=0:numHoles-1
     Drilling1_Poses(:,:,i*3+3) = FPB*trotx((-pi/numHoles)*0.5)*transl((amplitudToro/numHoles)*0.5,0,0)*trotx(tableAlfa)*trotx(-pi*i/numHoles)*transl(amplitudToro*i/numHoles,0,0)*transl(-tableDim(1)+diamTube+toolLenght+0.1,-radiusExtTorus+radiusTube,0)*PoseTool;
     %position of the hole
     Drill1_Plot(:,:,i+1) = FPB*trotx((-pi/numHoles)*0.5)*transl((amplitudToro/numHoles)*0.5,0,0)*trotx(tableAlfa)*trotx(-pi*i/numHoles)*transl(amplitudToro*i/numHoles,0,0)*transl(-tableDim(1)+diamTube,-radiusExtTorus+radiusTube,0)*PoseTool;  
-    %{
-    HH1=trplot(Drill1_Plot(:,:,i+), ... % Plot frame PB at the origin
+    
+    HH1=trplot(Drill1_Plot(:,:,i+1), ... % Plot frame PB at the origin
         'frame', 'HF', ...
         'color', 'K',...
         'text_opts', {'FontSize', 10, 'FontWeight', 'bold'},...
@@ -141,11 +141,9 @@ for i=0:numHoles-1
         'arrow',...
         'width', 0.35);
     hold on;
-    %}
+    
 end
 
-coor_circle=transl(Drill1_Plot)';
-scatter3(coor_circle(1,:),coor_circle(2,:),coor_circle(3,:),2,'r','LineWidth',5)
 hold on;
 axis([-0.5 3 -0.5 3 -0.5 3]);
 
@@ -154,8 +152,7 @@ for i=0:numHoles-1
     %position of the hole
     Drill2_Plot(:,:,i+1) = FPB*trotx((-pi/numHoles)*0.5)*transl((amplitudToro/numHoles)*0.5,0,0)*trotx(tableAlfa)*trotx(-pi*i/numHoles)*transl(amplitudToro*i/numHoles,0,0)*transl(-tableDim(1),-radiusExtTorus+radiusTube,0)*PoseTool;
    
-    %{
-    HH2=trplot(Drill2_Plot(:,:,i+1), ... % Plot frame PB at the origin
+    HH2 = trplot(Drill2_Plot(:,:,i+1), ... % Plot frame PB at the origin
         'frame', 'HR', ...
         'color', 'K',...
         'text_opts', {'FontSize', 10, 'FontWeight', 'bold'},...
@@ -164,17 +161,15 @@ for i=0:numHoles-1
         'width', 0.35);
     hold on;
     axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
-    %}
+    
 end
 
-coor_circle=transl(Drill2_Plot)';
-scatter3(coor_circle(1,:),coor_circle(2,:),coor_circle(3,:),2,'r','LineWidth',5)
-hold on;
 axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
-
+axis 'equal';
+%%
 % b) Repeat the obove operation for the center of the milling groove. Draw
 % this frames.
-
+grooveFig = openfig('SketchFig.fig');
 for i=0:numHoles-1
     PoseTool = trotx(pi/2)*troty(pi/2)*trotx(pi/10)*trotz(pi/2)*trotx(pi/2);
     %position before start grooving
@@ -188,8 +183,8 @@ for i=0:numHoles-1
     %position of the groove
     Groove_Plot(:,:,i+1) = FPB*trotx((-pi/numHoles)*0.5)*transl((amplitudToro/numHoles)*0.5,0,0)*trotx(tableAlfa)*trotx(-pi*i/numHoles)*transl(amplitudToro*i/numHoles,0,0)*transl(-tableDim(1)+radiusTube,-radiusExtTorus,0)*PoseTool;
     
-    %{
-    HG=trplot(Groove_Pose(:,:,i+1), ... % Plot frame PB at the origin
+    
+    HG=trplot(Groove_Plot(:,:,i+1), ... % Plot frame PB at the origin
         'frame', 'G', ...
         'color', 'R',...
         'text_opts', {'FontSize', 10, 'FontWeight', 'bold'},...
@@ -198,7 +193,7 @@ for i=0:numHoles-1
         'width', 0.35);
     hold on;
     axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
-    %}
+    
 
     Groove_Scaled = Groove/1000;
     Groove_Scaled(4,:,:) = 1;
@@ -206,14 +201,19 @@ for i=0:numHoles-1
     ma = max(Groove_Scaled(2,:));
     mi = min(Groove_Scaled(2,:));
     Groove_Scaled = Groove_Plot(:,:,i+1)*transl(+(ma-mi)/2,0,0)*trotz(pi/2)*Groove_Scaled;
-    plot3(Groove_Scaled(1,:),Groove_Scaled(2,:),Groove_Scaled(3,:),'G') % plotting the Groove
     axis 'equal';
+    hold on
 end
+axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
+axis 'equal';
 
+%%
 % c) The reference frames for all welding points, such that z-axis of the tool 
 % is orthogonal to the surface of the torus and the x-axis is in the direction of 
 % spiral trajectory. Draw in scale the frames
-k=0
+weldingFig = openfig('SketchFig.fig');
+
+k=0;
 for i=0:numTurns-1
     PoseTool = trotx(pi/2)*troty(pi/2)*trotx(pi/10)*trotz(pi/2)*trotx(pi/2);
     for j=0:WeldPointPerTurn-1
@@ -226,7 +226,7 @@ for i=0:numTurns-1
 
             k= k+1;
         end
-    %{
+    
     HW=trplot(Welding_points(:,:,(i+1)*WeldPointPerTurn+(j+1)), ... % Plot frame PB at the origin
         'frame', 'W', ...
         'color', 'G',...
@@ -236,31 +236,32 @@ for i=0:numTurns-1
         'width', 0.1);
     hold on;
     axis([-0.5 1.5 -0.5 2.25 -0.5 2.5]);
-    %}
+    
     end
 end
+axis([-0.5 1.5 -0.5 2 -0.5 2.5]);
+axis 'equal';
 
-%plot3(Weld_points(1,:),Weld_points(2,:),Weld_points(3,:),'g','LineWidth',2)
-%hold on
-%scatter3(Weld_points(1,:),Weld_points(2,:),Weld_points(3,:),'b','fillet')
-%xlabel('x');
-%ylabel('y');
-%zlabel('z');
+%% Robo working environment 
+roboFig = openfig('SketchFig.fig');
+for i=0:numHoles-1
+    plot3(Groove_Scaled(1,:),Groove_Scaled(2,:),Groove_Scaled(3,:),'G') % plotting the Groove
+end
+coor_circle=transl(Drill1_Plot)';
+scatter3(coor_circle(1,:),coor_circle(2,:),coor_circle(3,:),2,'r','LineWidth',5)
+coor_circle=transl(Drill2_Plot)';
+scatter3(coor_circle(1,:),coor_circle(2,:),coor_circle(3,:),2,'r','LineWidth',5)
+coor_circle=transl(Welding_points)';
+scatter3(coor_circle(1,:),coor_circle(2,:),coor_circle(3,:),2,'b','LineWidth',5);
 
-
-
-
-%for i=1:n
-%Welder_Pose(:,:,i)= INI*trotx(-pi/2)*troty(2*pi*i/n)*transl(0, 0, -radius)
-%end
-Q= p560.ikine6s(Drilling1_Poses, 'run')
-axis([-0.5 1.5 -0.5 2.25 -0.5 2.5]);
-p560.plot(Q)
-
-Q= p560.ikine6s(Grooving_Poses, 'run')
-axis([-0.5 1.5 -0.5 2.25 -0.5 2.5]);
-p560.plot(Q)
-
-Q= p560.ikine6s(Welding_pointsRobo, 'run')
-axis([-0.5 1.5 -0.5 2.25 -0.5 2.5]);
-p560.plot(Q)
+% Q= p560.ikine6s(Drilling1_Poses, 'run');
+% axis([-0.5 1.5 -0.5 2.25 -0.5 2.5]);
+% p560.plot(Q)
+% 
+% Q= p560.ikine6s(Grooving_Poses, 'run');
+% axis([-0.5 1.5 -0.5 2.25 -0.5 2.5]);
+% p560.plot(Q)
+% 
+% Q= p560.ikine6s(Welding_pointsRobo, 'run');
+% axis([-0.5 1.5 -0.5 2.25 -0.5 2.5]);
+% p560.plot(Q)
